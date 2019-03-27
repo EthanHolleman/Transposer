@@ -1,11 +1,12 @@
-from samParser import *
-from reallign import Element
+from interp import *
+from element import Element
+
 def main():
-    dict = {}
-    dict = makeAllignDict("chr2.sorted.bam.txt")
 
-
-    print(Element.createAllignmentList(dict))
+    list = []
+    list = createAllignmentList(makeAllignDict(toTxt("chr2.sorted.bam")))
+    print(list)
+    print(len(list))
 
 
 if __name__ == '__main__':
