@@ -2,7 +2,7 @@ import os
 from element import Element
 
 def makeAllignDict(bamToTxtFile):
-    #creates a dictionart with the ket as location and sequence as entry
+    #creates a dictionary with the ket as location and sequence as entry
     dict = {}
     try:
         with open(bamToTxtFile) as txt:
@@ -14,8 +14,16 @@ def makeAllignDict(bamToTxtFile):
 
     return dict
 
+def createAllignmentList(elementDict):
+    #creates list of Element objects, only adds info immediately known from allignment
+    elementList = []
+    for key in elementDict:
+        elementList.append(Element("UNNAMED", int(key),0,0,"NONE",elementDict[key]))
+
+    return elementList
+
 def toSortedBam(samFile):
-    #cultiual legal and political
+    #sends sam file to a sorted bam file
     try:
         if not ".sam" in samFile:
             samFile = samFile + ".sam"
@@ -28,6 +36,8 @@ def toSortedBam(samFile):
         print("FileNotFoundError at toSortedBam in search.py")
 
 def toTxt(samFile):
+    #takes sam or bam file and sends to txt file
+    #recommended to sort before this
     outputFile = samFile + ".txt"
     try:
         command = "samtools view {} > {}".format(samFile,outputFile)
@@ -37,14 +47,6 @@ def toTxt(samFile):
     except FileNotFoundError:
         print("FileNotFoundError at toTxt in search.py")
 
-def createAllignmentList(elementDict):
-    elementList = []
-    for key in elementDict:
-        elementList.append(Element("UNNAMED", key,0,0,"NONE",elementDict[key]))
-
-    return elementList
-
-
 def nameElements():
     #orders the elements along the chromosomes based on relative order
     #adds name based on the order and returns array
@@ -52,18 +54,30 @@ def nameElements():
 
 def findEndLocation(elementList):
     #takes list of elements and uses start location and sequece to calculate length
-    for element in elementArray:
-        element.endLocation  = element.startLocation + len(element.seq)
-        elemet.length = element.endLocation - element.startLocation
+    for element in elementList:
+        element.endLocation  = int(element.startLocation) + len(element.seq)
+        element.length = int(element.endLocation) - int(element.startLocation)
 
-def matchLTRPairs(elementList, LTRList,completeCon,range):
-        #searched to see if lone element
-        #list should be ordered at this point
-        #least to greatest going on
-    for i in range(0,len(LTRList)):
-        current = LTRList[i]
-        next = LTRList[i+1]
+## TODO: verify working for all possible locations of solo elements
+def findSolos(LTRList,completeCon,allowance):
+    #create a new list that contains only the solo elements
+        #takes first element and "reaches" with con seq to possible 2nd LTR
 
+    soloList = []
+    i = 0
+    while i < len(LTRList)-1:
+        print(i)
+        reach = LTRList[i].endLocation + completeCon
+        diff = abs(LTRList[i+1].startLocation - reach)
 
-            #want to say they are linked if LTR is within +- 100 base
-            # of the length of complete LTR
+        if(diff > allowance):
+            LTRList[i].status = "SOLO"
+            soloList.append(LTRList[i])
+        else:
+            LTRList[i].status = "INTACT"
+            LTRList[i+1].status = "INTACT"
+            i+=1
+
+        i+=1
+
+    return soloList
