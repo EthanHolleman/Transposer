@@ -1,9 +1,20 @@
+import sys, argparse
 from interp import *
+from args import *
 from element import Element
 
-def main():
 
+def main():
+    args()
+
+    #index = sys.argv[1]
+    #LTRcon = sys.argv[2]
+    #seqCon = sys.argv[3]
+    #allowance = sys.argv[4]
+    #output = sys.argv[5]
+ #issue with same file name
     list = []
+
     list = createAllignmentList(makeAllignDict(toTxt("chr2.sorted.bam")))
     findEndLocation(list)
     con = 4460
