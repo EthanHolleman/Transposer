@@ -14,7 +14,7 @@ In order to use this program you must have already installed the following progr
 * Python 3
 
 ## Current File Structure
-
+```
 ├── consensus
 │   ├── argsCon.py
 │   ├── con.py
@@ -44,3 +44,4 @@ In order to use this program you must have already installed the following progr
     ├── interp.py
     ├── remap.py
     └── tier.py
+```
