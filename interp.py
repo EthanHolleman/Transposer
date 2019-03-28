@@ -32,6 +32,9 @@ def toSortedBam(samFile):
         commandSort = "samtools sort {} -o {}".format(samFile,samFile.replace(".sam",".sorted.bam"))
         os.system(commandBam)
         os.system(commandSort) #need to finish this command
+
+        return samFile.replace(".sam",".sorted.bam")
+
     except FileNotFoundError:
         print("FileNotFoundError at toSortedBam in search.py")
 

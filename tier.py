@@ -8,7 +8,7 @@ def search (con, index, outputFile):
         commandSearch = "bowtie2 -x {} -r {} -a -non--deterministic -S {}".format(index,con,outputFile)
         samCommand = "Samtools view -S -b {} "
         os.system(command)
-        toSortedBam(outputFile)
+        return toSortedBam(outputFile)
         #will run the command and return a samfile
     except FileNotFoundError:
         print("FileNotFoundError at search in search.py")
