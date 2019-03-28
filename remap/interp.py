@@ -1,29 +1,6 @@
-import os
-from element import Element
-
-def makeAllignDict(bamToTxtFile):
-    #creates a dictionary with the ket as location and sequence as entry
-    dict = {}
-    try:
-        with open(bamToTxtFile) as txt:
-            for line in txt:
-                line = line.split("\t") #splits each line into a list
-                dict[line[3]] = line[9] #locations of location and sequece alligned
-    except FileNotFoundError:
-        print("FileNotFoundError at makeAllignDict in samParser.py")
-
-    return dict
-
-def createAllignmentList(elementDict):
-    #creates list of Element objects, only adds info immediately known from allignment
-    elementList = []
-    for key in elementDict:
-        elementList.append(Element("UNNAMED", int(key),0,0,"NONE",elementDict[key]))
-
-    return elementList
 
 def toSortedBam(samFile):
-    #sends sam file to a sorted bam file
+    #cultiual legal and political
     try:
         if not ".sam" in samFile:
             samFile = samFile + ".sam"
@@ -31,37 +8,60 @@ def toSortedBam(samFile):
         commandBam = "samtools -S -b {} > {}".format(samFile,samFile.replace(".sam",".bam"))
         commandSort = "samtools sort {} -o {}".format(samFile,samFile.replace(".sam",".sorted.bam"))
         os.system(commandBam)
-        os.system(commandSort) #need to finish this command
-
-        return samFile.replace(".sam",".sorted.bam")
+        os.system(commandSort)
 
     except FileNotFoundError:
         print("FileNotFoundError at toSortedBam in search.py")
 
 def toTxt(samFile):
-    #takes sam or bam file and sends to txt file
-    #recommended to sort before this
     outputFile = samFile + ".txt"
     try:
         command = "samtools view {} > {}".format(samFile,outputFile)
         os.system(command)
-        return outputFile
-
     except FileNotFoundError:
         print("FileNotFoundError at toTxt in search.py")
+
+def createAllignmentList(bamToTxtFile):
+    try:
+        elemetList = []
+        with open(bamToTxtFile, "r") as txt:
+            for line in txt:
+                line = line.split("\t") #splits each line into a list
+                name = line[2]
+                start = line[3]
+                seq = line[9]
+                elementList.append(Element(name, start,0,0,"NONE",seq))
+
+        return elementList
+
+    except FileNotFoundError:
+        print("FileNotFoundError at makeAllignDict in samParser.py")
 
 def nameElements():
     #orders the elements along the chromosomes based on relative order
     #adds name based on the order and returns array
+    #CM000834.3 for chromsome increases in number as chromsome increases
+        #read all of these values first to create overarching order to work within
+            #start location values are ordered under the ultimate order of chromosomes
     pass
+    #now we have the solo LTRs and the complete consensus sequecnes in orders
+    #need to merge the lists so they maintain order by first chromosme and then seq
 
 def findEndLocation(elementList):
     #takes list of elements and uses start location and sequece to calculate length
-    for element in elementList:
-        element.endLocation  = int(element.startLocation) + len(element.seq)
-        element.length = int(element.endLocation) - int(element.startLocation)
+    for element in elementArray:
+        element.endLocation  = element.startLocation + len(element.seq)
 
-## TODO: verify working for all possible locations of solo elements
+        elemet.length = element.endLocation - element.startLocation
+
+def matchLTRPairs(elementList, LTRList,completeCon,range):
+        #searched to see if lone element
+        #list should be ordered at this point
+        #least to greatest going on
+    for i in range(0,len(LTRList)):
+        current = LTRList[i]
+        next = LTRList[i+1]
+
 def findSolos(LTRList,completeCon,allowance):
     #create a new list that contains only the solo elements
         #takes first element and "reaches" with con seq to possible 2nd LTR
@@ -83,4 +83,4 @@ def findSolos(LTRList,completeCon,allowance):
 
         i+=1
 
-    return soloList
+return soloList

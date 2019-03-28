@@ -15,7 +15,7 @@ def main():
  #issue with same file name
     list = []
 
-    list = createAllignmentList(makeAllignDict(toTxt("chr2.sorted.bam")))
+    list = createAllignmentList(toTxt("chr2.sorted.bam"))
     findEndLocation(list)
     con = 4460
     newList = findSolos(list,con,10000)

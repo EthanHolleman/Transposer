@@ -1,6 +1,5 @@
 import sys, argparse
 
-
 def argsRemap():
     #control structure for remap functions
 
@@ -11,7 +10,6 @@ def argsRemap():
     parser.add_argument("-allowance", "--a", type = int,
     help = "Number base pair variance in LTR map", nargs='?',const=1000)
     args = parser.parse_args()
-
 
     if not args.index:
         print("Need index")
