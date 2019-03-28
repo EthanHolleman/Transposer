@@ -12,3 +12,35 @@ In order to use this program you must have already installed the following progr
 * Bowtie 2
 * Samtools
 * Python 3
+
+## Current File Structure
+
+├── consensus
+│   ├── argsCon.py
+│   ├── con.py
+│   └── pagan
+│       └── bin
+│           ├── bppancestor
+│           ├── bppdist
+│           ├── bppphysamp
+│           ├── exonerate
+│           ├── lib
+│           │   ├── disttbfast
+│           │   ├── libglib-2.0.so.0
+│           │   ├── tbfast
+│           │   └── version
+│           ├── mafft
+│           ├── pagan
+│           └── raxml
+├── __pycache__
+│   ├── args.cpython-37.pyc
+│   ├── element.cpython-37.pyc
+│   └── interp.cpython-37.pyc
+├── README.md
+└── remap
+    ├── argsRemap.py
+    ├── element.py
+    ├── __init__.py
+    ├── interp.py
+    ├── remap.py
+    └── tier.py
