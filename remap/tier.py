@@ -1,13 +1,18 @@
-#takes the LTR consensus and the complete and bowties them
+#WARNING
+    #Edit this file at your own risk
+    #To change Bowtie search paramters edit only the commandSearch variable
+    #See Bowtie2 manual for more information
+
 import os
-from samParser import *
+from interp import toSortedBam
 
 def search (con, index, outputFile):
-    #general search for a local allignments
+    #general search method for a local allignments
     try:
         commandSearch = "bowtie2 -x {} -r {} -a -non--deterministic -S {}".format(index,con,outputFile)
-        samCommand = "Samtools view -S -b {} "
-        os.system(command)
+        samCommand = "Samtools view -S -b {} ".format(outputFile)
+        os.system(commandSearch)
+        os.system(samCommand)
         return toSortedBam(outputFile)
         #will run the command and return a samfile
     except FileNotFoundError:

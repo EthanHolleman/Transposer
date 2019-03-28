@@ -1,3 +1,4 @@
+import os
 
 def toSortedBam(samFile):
     #cultiual legal and political
@@ -18,12 +19,13 @@ def toTxt(samFile):
     try:
         command = "samtools view {} > {}".format(samFile,outputFile)
         os.system(command)
+        return outputFile
     except FileNotFoundError:
         print("FileNotFoundError at toTxt in search.py")
 
 def createAllignmentList(bamToTxtFile):
     try:
-        elemetList = []
+        elementList = []
         with open(bamToTxtFile, "r") as txt:
             for line in txt:
                 line = line.split("\t") #splits each line into a list
@@ -49,23 +51,14 @@ def nameElements():
 
 def findEndLocation(elementList):
     #takes list of elements and uses start location and sequece to calculate length
-    for element in elementArray:
+    for element in elementList:
         element.endLocation  = element.startLocation + len(element.seq)
 
         elemet.length = element.endLocation - element.startLocation
 
-def matchLTRPairs(elementList, LTRList,completeCon,range):
-        #searched to see if lone element
-        #list should be ordered at this point
-        #least to greatest going on
-    for i in range(0,len(LTRList)):
-        current = LTRList[i]
-        next = LTRList[i+1]
-
 def findSolos(LTRList,completeCon,allowance):
     #create a new list that contains only the solo elements
         #takes first element and "reaches" with con seq to possible 2nd LTR
-
     soloList = []
     i = 0
     while i < len(LTRList)-1:
@@ -83,4 +76,4 @@ def findSolos(LTRList,completeCon,allowance):
 
         i+=1
 
-return soloList
+        return soloList
