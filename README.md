@@ -1,4 +1,4 @@
-# Transposer *DRAFT*
+
 
 ## Overview
 
@@ -12,4 +12,3 @@ In order to use this program you must have already installed the following progr
 * Bowtie 2
 * Samtools
 * Python 3
-* PAGAN (optional for creating consensus sequences)
