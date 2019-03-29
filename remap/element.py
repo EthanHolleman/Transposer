@@ -1,7 +1,8 @@
 
 class Element:
 
-    def __init__(self,name,startLocation,endLocation,length,status,seq,): #defualt contructor change here
+    def __init__(self,name,startLocation,endLocation,length,status,seq,):
+        #defualt contructor
         self.name = "NONE"
         self.startLocation = 0
         self.endLocation = 0
@@ -10,7 +11,7 @@ class Element:
         self.seq = "NONE"
 
 
-    def __init__(self,name,startLocation,endLocation,length,status,seq,): #contructor for
+    def __init__(self,name,startLocation,endLocation,length,status,seq,):
         self.name = name
         self.startLocation = int(startLocation)
         self.endLocation = int(endLocation)
@@ -19,8 +20,13 @@ class Element:
         self.seq = seq
 
     def toString(self):
-        #sends element to one line string
-        pass
+        #takes element and returns values as a string on one line
+        string = "{},{},{},{},{},{}".format(name, startLocation,endLocation,length,status,seq)
+        return string
+
     def toStringFasta(self):
         #sends element to 2 line string to be added to fasta file
-        pass
+        fastaLine = ">{},{},{},{},{},{}".format(name,startLocation,endLocation,length,status,
+        "\n" + seq)
+        return fastaLine
+        
