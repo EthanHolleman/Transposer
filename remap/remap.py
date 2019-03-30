@@ -8,6 +8,9 @@ def main():
     args = argsRemap()
 
     '''
+    need to look for a range in the LTRS less than the reach of the consensus sequence 
+
+
     Basic structure of a run
         con LTR and index files location are read in through the argsRemap
         search done on both con and LTR to produce sam files
