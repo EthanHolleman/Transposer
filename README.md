@@ -13,6 +13,14 @@ Currently this program will only run on operating systems with a BASH terminal. 
 * Samtools
 * Python 3
 
+## Future Sections to Include
+* Quick start guide 
+* Method for detecting solo vs intact elements
+* Method for handeling truncated elements
+* Potnetial issues section
+    * nested elements of the same family 
+ 
+
 ## Current File Structure 
 The program will be divided into two main scripts that can act independently. The primary funcionality of the program will come from the remap.py file which acts as the main method for remaping LTR elements using Bowtie2. This program requires consensus sequecnes of both the LTR and element sequences. 
 If you do not have these already they can be generated from a fasta file using the con.py file which will act as a python interface to the pertient PAGAN functionality. 
