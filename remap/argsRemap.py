@@ -2,15 +2,18 @@ import sys, argparse, os
 
 def argsRemap():
     #control structure for remap functions
-
+    #add ability to give the assenstion file which will translate the chromosome number
+    ### TODO: add parameter and control structure to do create index
     parser = argparse.ArgumentParser()
     parser.add_argument("-index", "-i", help = "Set Bowtie index to be used")
     parser.add_argument("-LTRcon","-l",help = "LTR consensus sequence")
-    parser.add_argument("-seqCon", "-s",help = "Element consensus without LTRs")
+    parser.add_argument("-seqCon", "-s",help = "Complete element consensus")
     parser.add_argument("-allowance", "--a", type = int,
     help = "Number base pair variance in LTR map", nargs='?',const=1000)
     parser.add_argument("-advancedSearch","-v",
     help = "For andvanced users who wish to change bowtie search parameters directly " )
+    parser.add_arguement("-name", "-n", help = "Name of element family")
+    parser.add_argument("-newIndex", "-b", help= "Tells program to create new bowtie index")
     args = parser.parse_args()
 
     if not args.index:

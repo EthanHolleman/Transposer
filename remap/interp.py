@@ -24,7 +24,21 @@ def toTxt(samFile):
     except FileNotFoundError:
         print("FileNotFoundError at toTxt in search.py")
 
-def createAllignmentList(bamToTxtFile):
+def translateName(assenstionNums):
+    #reads NCBI assenstion number file to create dictionary to translate number to chrs later on
+    try:
+        chrs = {}
+        with open(assenstionNums) as names:
+            for line in names:
+                line = line.replace("\n","")
+                line = line.split("\t")
+                chrs.update({line[1] : line[0]})
+        return chrs
+
+    except FileNotFoundError:
+        print("FileNotFoundError" + " at translateName")
+
+def createAllignmentList(bamToTxtFile,dict):
     #takes txt file from toTxt method and converts to list of Element objects
     try:
         elementList = []
@@ -36,20 +50,28 @@ def createAllignmentList(bamToTxtFile):
                 seq = line[9]
                 elementList.append(Element(name, start,0,0,"NONE",seq))
 
+        for elemet in elementList:
+            element.endLocation = element.startLocation + len(element.seq)
+            elemet.length = element.endLocation - element.startLocation
+            element.name = dict[element.name]
+
+
         return elementList
 
     except FileNotFoundError:
         print("FileNotFoundError at makeAllignDict in samParser.py")
 
+
+
 def mergeLists(soloList, conList):
-    ## WARNING: Still requires testing 
+    ## WARNING: Still requires testing
     #takes the LTR list and complete element list and merges in order
         #order based on chr number first then start location with lowest first
-
     mergedList = []
     done = "DONE"
     itrSolo = itr(soloList,done)
     itrCon = itr(conList,done)
+
 
     while itrSolo.next() != done:
         soloDelta = itr.next()
@@ -81,11 +103,6 @@ def nameElements(mergedList, familyName):
             #start location values are ordered under the ultimate order of chromosomes
 
 
-
-
-
-
-
     pass
     #now we have the solo LTRs and the complete consensus sequecnes in orders
     #need to merge the lists so they maintain order by first chromosme and then seq
@@ -96,6 +113,7 @@ def findEndLocation(elementList):
         element.endLocation  = element.startLocation + len(element.seq)
 
         elemet.length = element.endLocation - element.startLocation
+
 
 def findSolos(LTRList,completeCon,allowance):
     #create a new list that contains only the solo elements

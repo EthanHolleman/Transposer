@@ -18,6 +18,9 @@ def search (con, index, outputFile):
     except FileNotFoundError:
         print("FileNotFoundError at search in search.py")
 
+def makeIndex(name,):
+    pass
+
 
 
 #runs the search converts to bam files

@@ -5,10 +5,43 @@ from element import Element
 
 
 def main():
-    args = argsRemap()
 
+    conList = []
+    LTRList = []
+    soloList = []
+    remapedList = []
+    #variable declarations
+
+    args = argsRemap()
+    sortedBamCon = search(args.seqCon,args.index,args.outputFile) # need to make output file variable in argsCon can make this defualt arg
+    sortedTxtCon = toTxt(sortedBamCon)
+
+    sortedBamLTR = search(args.LTRcon, args.index, args.outputFile) #need to add something to output here to differntiate
+    sortedTxtLTR = toTxt(sortedBamLTR)
+
+    ##CHECK 1
+    #At this point Bowtie results should be in txt format
+
+    conList = createAllignmentList(sortedTxtCon, translateName(assenstionNums))
+    LTRList = createAllignmentList(sortedTxtLTR, translateName(assenstionNums)) #need this variable in params args
+
+    ##Check 2
+    #LTR and complete consensus lists should be renamed with chr number, and have all other infor (seq, length, start, end) except LTR status
+
+    soloList = findSolos[LTRList]
+
+    ##CHECK 3
+    #soloList should contain only Solo LTR elements
+
+    remapedList = nameElements(mergeLists(soloList, conList),args.name) #need family name variable
+
+    ##CHECK 4
+    #remapedList should have the finished product to be outputted to a fasta
+        #need to write rename function and within it make sure to change name to chromosome 1 instead of 1
+
+    print(translateName("assensionNums.txt"))
     '''
-    need to look for a range in the LTRS less than the reach of the consensus sequence 
+    need to look for a range in the LTRS less than the reach of the consensus sequence
 
 
     Basic structure of a run
