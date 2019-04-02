@@ -10,13 +10,16 @@ def main():
     LTRList = []
     soloList = []
     remapedList = []
+    outputTempCon = "searchOutCon.sam"
+    outputTempLTR = "searcOutLTR.sam"
     #variable declarations
 
     args = argsRemap()
-    sortedBamCon = search(args.seqCon,args.index,args.outputFile) # need to make output file variable in argsCon can make this defualt arg
+    sortedBamCon = search(args.seqCon,args.index,outputTempCon) # need to make output file variable in argsCon can make this defualt arg
     sortedTxtCon = toTxt(sortedBamCon)
+    #outputfile names are going to be made in program no input from user
 
-    sortedBamLTR = search(args.LTRcon, args.index, args.outputFile) #need to add something to output here to differntiate
+    sortedBamLTR = search(args.LTRcon, args.index, outputTempCon) #need to add something to output here to differntiate
     sortedTxtLTR = toTxt(sortedBamLTR)
 
     ##CHECK 1
@@ -39,7 +42,7 @@ def main():
     #remapedList should have the finished product to be outputted to a fasta
         #need to write rename function and within it make sure to change name to chromosome 1 instead of 1
 
-    print(translateName("assensionNums.txt"))
+    
     '''
     need to look for a range in the LTRS less than the reach of the consensus sequence
 

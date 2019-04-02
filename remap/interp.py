@@ -24,19 +24,6 @@ def toTxt(samFile):
     except FileNotFoundError:
         print("FileNotFoundError at toTxt in search.py")
 
-def translateName(assenstionNums):
-    #reads NCBI assenstion number file to create dictionary to translate number to chrs later on
-    try:
-        chrs = {}
-        with open(assenstionNums) as names:
-            for line in names:
-                line = line.replace("\n","")
-                line = line.split("\t")
-                chrs.update({line[1] : line[0]})
-        return chrs
-
-    except FileNotFoundError:
-        print("FileNotFoundError" + " at translateName")
 
 def createAllignmentList(bamToTxtFile,dict):
     #takes txt file from toTxt method and converts to list of Element objects
@@ -51,16 +38,29 @@ def createAllignmentList(bamToTxtFile,dict):
                 elementList.append(Element(name, start,0,0,"NONE",seq))
 
         for elemet in elementList:
-            element.endLocation = element.startLocation + len(element.seq)
-            elemet.length = element.endLocation - element.startLocation
-            element.name = dict[element.name]
-
+            element.endLocation = element.startLocation + len(element.seq) #sets end endLocation
+            elemet.length = element.endLocation - element.startLocation #sets length
+            element.name = dict[element.name] #uses the assenfile to rename elements with just chr number
 
         return elementList
 
     except FileNotFoundError:
         print("FileNotFoundError at makeAllignDict in samParser.py")
 
+
+def translateName(assenstionNums):
+    #reads NCBI assenstion number file to create dictionary to translate number to chrs later on
+    try:
+        chrs = {}
+        with open(assenstionNums) as names:
+            for line in names:
+                line = line.replace("\n","")
+                line = line.split("\t")
+                chrs.update({line[1] : line[0]})
+        return chrs
+
+    except FileNotFoundError:
+        print("FileNotFoundError" + " at translateName")
 
 
 def mergeLists(soloList, conList):
@@ -69,6 +69,7 @@ def mergeLists(soloList, conList):
         #order based on chr number first then start location with lowest first
     mergedList = []
     done = "DONE"
+
     itrSolo = itr(soloList,done)
     itrCon = itr(conList,done)
 
@@ -95,32 +96,31 @@ def mergeLists(soloList, conList):
     mergedList.extend(itrCon) #add all remaining elements to the merged list
     return mergedList
 
+
 def nameElements(mergedList, familyName):
-    #orders the elements along the chromosomes based on relative order
-    #adds name based on the order and returns array
-    #CM000834.3 for chromsome increases in number as chromsome increases
-        #read all of these values first to create overarching order to work within
-            #start location values are ordered under the ultimate order of chromosomes
+    #orders the elements along the chromosomes and based on order renames
 
+    chrDict = {}
 
-    pass
-    #now we have the solo LTRs and the complete consensus sequecnes in orders
-    #need to merge the lists so they maintain order by first chromosme and then seq
+    for element in mergedList:
+        if element.name not in chrDict:
+            chrDict[element.name] = [element]
+        else:
+            chrDict[element.name] = append(element)
+    #dictionary key = chr and values are the elements
 
-def findEndLocation(elementList):
-    #takes list of elements and uses start location and sequece to calculate length
-    for element in elementList:
-        element.endLocation  = element.startLocation + len(element.seq)
-
-        elemet.length = element.endLocation - element.startLocation
+    for key in chrDict:
+        list = chrDict[key]
+        i = 1
+        for element in list:
+            element.name = familyName + " " + element.name + "-" + i
+            i += 1
 
 
 def findSolos(LTRList,completeCon,allowance):
     #create a new list that contains only the solo elements
         #takes first element and "reaches" with con seq to possible 2nd LTR
 
-    #needs to earch for a range of elements in order to account for truncated elements
-        #want things that have anything from the overall reach
     soloList = []
     i = 0
     while i < len(LTRList)-1:

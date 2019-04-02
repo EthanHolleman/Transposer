@@ -12,8 +12,9 @@ def argsRemap():
     help = "Number base pair variance in LTR map", nargs='?',const=1000)
     parser.add_argument("-advancedSearch","-v",
     help = "For andvanced users who wish to change bowtie search parameters directly " )
-    parser.add_arguement("-name", "-n", help = "Name of element family")
+    parser.add_argument("-name", "-n", help = "Name of element family")
     parser.add_argument("-newIndex", "-b", help= "Tells program to create new bowtie index")
+    parser.add_argument("-chrKeys", "-k", help = "Acts as a key to translate NCBI assention file chromosome names to numbers")
     args = parser.parse_args()
 
     if not args.index:
@@ -27,5 +28,8 @@ def argsRemap():
         sys.exit()
     if args.advancedSearch == "t":
         os.system("nano tier.py")
+    if not args.chrKeys:
+        print("Please provide a file of keys for chromosomes")
+        sys.exit()
 
     return args
