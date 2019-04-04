@@ -1,7 +1,7 @@
 
 class Element:
 
-    def __init__(self,name,startLocation,endLocation,length,status,seq,):
+    def __init__(self):
         #defualt contructor
         self.name = "NONE"
         self.startLocation = 0
@@ -29,4 +29,3 @@ class Element:
         fastaLine = ">{},{},{},{},{},{}".format(name,startLocation,endLocation,length,status,
         "\n" + seq)
         return fastaLine
-        

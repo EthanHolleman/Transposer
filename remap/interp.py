@@ -1,24 +1,30 @@
 import os
+from element import Element
 
 def toSortedBam(samFile):
     #takes a sam file and covernts to sorted bam using samtools
     try:
-        if not ".sam" in samFile:
-            samFile = samFile + ".sam"
+        outputFile = samFile
+        if not ".sam" in outputFile:
+            outputFile = outputFile + ".sam"
 
         commandBam = "samtools view -S -b {} > {}".format(samFile,samFile.replace(".sam",".bam"))
         commandSort = "samtools sort {} -o {}".format(samFile,samFile.replace(".sam",".sorted.bam"))
         os.system(commandBam)
         os.system(commandSort)
 
+        return outputFile.replace(".sam", ".sorted.bam")
+
     except FileNotFoundError:
         print("FileNotFoundError at toSortedBam in search.py")
 
 def toTxt(samFile):
     #takes a sam or bam file and converts to txt using samtools view
-    outputFile = samFile + ".txt"
+    outputFile = str(samFile) + ".txt"
+    print(outputFile + " " + "to txt working")
     try:
         command = "samtools view {} > {}".format(samFile,outputFile)
+        print(command)
         os.system(command)
         return outputFile
     except FileNotFoundError:
@@ -37,10 +43,16 @@ def createAllignmentList(bamToTxtFile,dict):
                 seq = line[9]
                 elementList.append(Element(name, start,0,0,"NONE",seq))
 
-        for elemet in elementList:
+        for element in elementList:
             element.endLocation = element.startLocation + len(element.seq) #sets end endLocation
-            elemet.length = element.endLocation - element.startLocation #sets length
-            element.name = dict[element.name] #uses the assenfile to rename elements with just chr number
+            element.length = element.endLocation - element.startLocation #sets length
+
+            try:
+                element.name = dict[element.name]
+
+            except KeyError:
+                print("keyError at createAllignmentList")
+                print("key used was " + element.name)
 
         return elementList
 
@@ -57,43 +69,45 @@ def translateName(assenstionNums):
                 line = line.replace("\n","")
                 line = line.split("\t")
                 chrs.update({line[1] : line[0]})
+
         return chrs
 
     except FileNotFoundError:
         print("FileNotFoundError" + " at translateName")
 
 
-def mergeLists(soloList, conList):
+def mergeLists(soloList, conList): #not getting the sololist for some reason
+
     ## WARNING: Still requires testing
     #takes the LTR list and complete element list and merges in order
         #order based on chr number first then start location with lowest first
     mergedList = []
     done = "DONE"
+    print(conList)
 
-    itrSolo = itr(soloList,done)
-    itrCon = itr(conList,done)
+    iterCon = iter(conList,done)
+    iterSolo = iter(soloList,done)
 
-
-    while itrSolo.next() != done:
-        soloDelta = itr.next()
-        conDelta = itr.next()
+    while next(iterSolo )!= done:
+        soloDelta = next(iterSolo)
+        conDelta = next(iterCon)
 
         if soloDelta.name < conDelta.name: #testing for chr number
             mergedList.append(soloDelta)
-            soloDelta.next()
+            next(soloDelta)
         elif soloDelta.name > conDelta.name:
             mergedList.append(soloDelta)
-            conDelta.next()
+            next(conDelta)
         else:
             if soloDelta.startLocation < conDelta.startLocation:
                 mergedList.append(soloDelta)
-                soloDelta.next()
+                next(soloDelta)
             else:
                 mergedList.append(conDelta)
-                mergedList.next()
+                next(mergedList)
 
-    #at this point solo list itr will be complete
-    mergedList.extend(itrCon) #add all remaining elements to the merged list
+    #at this point solo list iter will be complete
+    mergedList.extend(iterCon) #add all remaining elements to the merged list
     return mergedList
 
 
@@ -120,7 +134,7 @@ def nameElements(mergedList, familyName):
 def findSolos(LTRList,completeCon,allowance):
     #create a new list that contains only the solo elements
         #takes first element and "reaches" with con seq to possible 2nd LTR
-
+        ## TODO: not returning list correctly is empty
     soloList = []
     i = 0
     while i < len(LTRList)-1:
@@ -139,4 +153,4 @@ def findSolos(LTRList,completeCon,allowance):
 
         i+=1
 
-        return soloList
+    return soloList

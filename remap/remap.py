@@ -2,6 +2,7 @@ import sys, argparse
 from interp import *
 from argsRemap import *
 from element import Element
+from tier import *
 
 
 def main():
@@ -15,34 +16,35 @@ def main():
     #variable declarations
 
     args = argsRemap()
+
     sortedBamCon = search(args.seqCon,args.index,outputTempCon) # need to make output file variable in argsCon can make this defualt arg
     sortedTxtCon = toTxt(sortedBamCon)
     #outputfile names are going to be made in program no input from user
 
-    sortedBamLTR = search(args.LTRcon, args.index, outputTempCon) #need to add something to output here to differntiate
+    sortedBamLTR = search(args.LTRcon, args.index, outputTempLTR) #need to add something to output here to differntiate
     sortedTxtLTR = toTxt(sortedBamLTR)
 
     ##CHECK 1
     #At this point Bowtie results should be in txt format
 
-    conList = createAllignmentList(sortedTxtCon, translateName(assenstionNums))
-    LTRList = createAllignmentList(sortedTxtLTR, translateName(assenstionNums)) #need this variable in params args
+    conList = createAllignmentList(sortedTxtCon, translateName(args.chrKeys))
+    LTRList = createAllignmentList(sortedTxtLTR, translateName(args.chrKeys)) #need this variable in params args
 
     ##Check 2
     #LTR and complete consensus lists should be renamed with chr number, and have all other infor (seq, length, start, end) except LTR status
 
-    soloList = findSolos[LTRList]
-
+    soloList = findSolos([LTRList], args.seqCon, args.LTRcon)
+    #TODO merged and find solos are having big issues my man
     ##CHECK 3
     #soloList should contain only Solo LTR elements
 
-    remapedList = nameElements(mergeLists(soloList, conList),args.name) #need family name variable
+    #remapedList = nameElements(mergeLists(soloList, conList),args.name) #need family name variable
 
     ##CHECK 4
     #remapedList should have the finished product to be outputted to a fasta
         #need to write rename function and within it make sure to change name to chromosome 1 instead of 1
 
-    
+
     '''
     need to look for a range in the LTRS less than the reach of the consensus sequence
 
