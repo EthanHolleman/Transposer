@@ -2,18 +2,30 @@ import os
 from element import Element
 
 def toSortedBam(samFile):
-    #takes a sam file and covernts to sorted bam using samtools
+    #takes a sam file and converts to sorted bam using samtools
+
     try:
         outputFile = samFile
         if not ".sam" in outputFile:
             outputFile = outputFile + ".sam"
 
-        commandBam = "samtools view -S -b {} > {}".format(samFile,samFile.replace(".sam",".bam"))
-        commandSort = "samtools sort {} -o {}".format(samFile,samFile.replace(".sam",".sorted.bam"))
+        bam = samFile.replace(".sam",".bam")
+        sortedBam = samFile.replace(".sam",".sorted.bam")
+
+        commandBam = "samtools view -S -b {} > {}".format(samFile,bam) #commands to be executed
+        commandSort = "samtools sort {} -o {}".format(samFile,sortedBam)
+
         os.system(commandBam)
         os.system(commandSort)
 
-        return outputFile.replace(".sam", ".sorted.bam")
+        try: #removes redundant files but leaves the sorted bam for user
+            os.system("rm {}".format(samFile))
+            os.system("rm {}".format(bam))
+
+        except FileNotFoundError:
+            print("FileNotFoundError at toSortedBam when trying to remove files")
+
+        return sortedBam # returns a sorted bam file name corresponding to one created in method
 
     except FileNotFoundError:
         print("FileNotFoundError at toSortedBam in search.py")
@@ -21,12 +33,12 @@ def toSortedBam(samFile):
 def toTxt(samFile):
     #takes a sam or bam file and converts to txt using samtools view
     outputFile = str(samFile) + ".txt"
-    print(outputFile + " " + "to txt working")
+
     try:
         command = "samtools view {} > {}".format(samFile,outputFile)
-        print(command)
         os.system(command)
-        return outputFile
+        return outputFile #returns txt file name corresponding to txt file created
+
     except FileNotFoundError:
         print("FileNotFoundError at toTxt in search.py")
 
@@ -48,11 +60,13 @@ def createAllignmentList(bamToTxtFile,dict):
             element.length = element.endLocation - element.startLocation #sets length
 
             try:
-                element.name = dict[element.name]
+                element.name = dict[element.name] #uses provided dictionary to set name to chr number
 
             except KeyError:
                 print("keyError at createAllignmentList")
                 print("key used was " + element.name)
+
+        os.system("rm {}".format(bamToTxtFile)) # removes txt version as no longer used
 
         return elementList
 
@@ -117,38 +131,29 @@ def nameElements(mergedList, familyName):
     chrDict = {}
 
     for element in mergedList:
-        if element.name not in chrDict:
+        if element.name not in chrDict: #names at this point are only ints
             chrDict[element.name] = [element]
         else:
-            chrDict[element.name] = append(element)
-    #dictionary key = chr and values are the elements
+            chrDict[element.name] = append(element) #if already present adds to a list corresponding to chr number
 
     for key in chrDict:
-        list = chrDict[key]
-        i = 1
-        for element in list:
+        list = chrDict[key] #gets list of elements sorted into a given chr number key
+        i = 1 #acts as element counter reset at each new key
+        for element in list: #loops through elements in chr list
             element.name = familyName + " " + element.name + "-" + i
             i += 1
 
 
 def findSolos(LTRList,completeCon,allowance):
-
-    #create a new list that contains only the solo elements
-        #takes first element and "reaches" with con seq to possible 2nd LTR
-        ## TODO: not returning list correctly is empty
+    #takes list of LTR elements and determines if each should be considered a solo element based on allowance
+    ##TODO need to write method for getting completeCon length
     soloList = []
     i = 0
-    print(len(LTRList))
 
     while i < len(LTRList):
-        print(i)
-        print("solos")
 
-        print(i)
         reach = LTRList[i].endLocation + completeCon
-        diff = (LTRList[i+1].startLocation - reach) #need to make sure this is enough
-        print(diff)
-        #print(diff)
+        diff = (LTRList[i+1].startLocation - reach) 
 
         if(diff > -(completeCon) and diff <= 0): #test for truncated element
             LTRList[i].status = "INTACT"
@@ -156,6 +161,7 @@ def findSolos(LTRList,completeCon,allowance):
             i+=1
             if i==len(LTRList)-1: # breaks if next element is the last in the list
                 break
+
         elif (abs(diff) > allowance):
             LTRList[i].status = "SOLO"
             soloList.append(LTRList[i])
@@ -168,7 +174,6 @@ def findSolos(LTRList,completeCon,allowance):
             i+=1
             if i == len(LTRList)-1: # breaks if next element is the last in the list
                 break
-
         i+=1
 
     return soloList
