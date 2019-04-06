@@ -35,49 +35,4 @@ Currently this program will only run on operating systems with a BASH terminal. 
 * Potnetial issues section
     * nested elements of the same family 
  
-
-## Current File Structure 
-The program will be divided into two main scripts that can act independently. The primary funcionality of the program will come from the remap.py file which acts as the main method for remaping LTR elements using Bowtie2. This program requires consensus sequecnes of both the LTR and element sequences. 
-If you do not have these already they can be generated from a fasta file using the con.py file which will act as a python interface to the pertient PAGAN functionality. 
-
-
-```
-.
-├── consensus
-│   ├── argsCon.py
-│   ├── con.py
-│   └── pagan
-│       └── bin
-│           ├── bppancestor
-│           ├── bppdist
-│           ├── bppphysamp
-│           ├── exonerate
-│           ├── lib
-│           │   ├── disttbfast
-│           │   ├── libglib-2.0.so.0
-│           │   ├── tbfast
-│           │   └── version
-│           ├── mafft
-│           ├── pagan
-│           └── raxml
-├── __pycache__
-│   ├── args.cpython-37.pyc
-│   ├── element.cpython-37.pyc
-│   └── interp.cpython-37.pyc
-├── README.md
-└── remap
-    ├── argsRemap.py
-    ├── chr2.sorted.bam.txt
-    ├── element.py
-    ├── __init__.py
-    ├── interp.py
-    ├── __pycache__
-    │   ├── argsRemap.cpython-37.pyc
-    │   ├── element.cpython-37.pyc
-    │   └── interp.cpython-37.pyc
-    ├── remap.py
-    └── tier.py
-
-
-```
 File structure is likely to change as I figure out a better layout. Probably should include a bin file or something like that
