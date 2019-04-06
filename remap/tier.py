@@ -9,12 +9,12 @@ def search (con, index, outputFile):
     #general search method for a local allignments
 
     try:
-        print("Samtools view -S -b {} ".format(outputFile))
+        #print("Samtools view -S -b {} ".format(outputFile))
         commandSearch = "bowtie2 -x {} -r {} -a --non-deterministic -S {}".format(index,con,outputFile)
-        samCommand = "Samtools view -S -b {} ".format(outputFile)
-        print("Samtools view -S -b {} ".format(outputFile))
+        #samCommand = "Samtools view -S -b {} ".format(outputFile)
+        #print("Samtools view -S -b {} ".format(outputFile))
         os.system(commandSearch)
-        os.system(samCommand)
+        #os.system(samCommand)
         outputFile = toSortedBam(outputFile)
 
         return outputFile

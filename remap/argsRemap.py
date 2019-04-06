@@ -8,10 +8,8 @@ def argsRemap():
     parser.add_argument("-index", "-i", help = "Set Bowtie index to be used")
     parser.add_argument("-LTRcon","-l",help = "LTR consensus sequence")
     parser.add_argument("-seqCon", "-s",help = "Complete element consensus")
-    parser.add_argument("-allowance", "--a", type = int,
+    parser.add_argument("-allowance", "-a", type = int,
     help = "Number base pair variance in LTR map", nargs='?',const=1000)
-    parser.add_argument("-advancedSearch","-v",
-    help = "For andvanced users who wish to change bowtie search parameters directly " )
     parser.add_argument("-name", "-n", help = "Name of element family")
     parser.add_argument("-newIndex", "-b", help= "Tells program to create new bowtie index")
     parser.add_argument("-chrKeys", "-k", help = "Acts as a key to translate NCBI assention file chromosome names to numbers")
@@ -26,8 +24,6 @@ def argsRemap():
     if not args.seqCon:
         print("Please provide an element consensus sequence")
         sys.exit()
-    if args.advancedSearch == "t":
-        os.system("nano tier.py")
     if not args.chrKeys:
         print("Please provide a file of keys for chromosomes")
         sys.exit()
