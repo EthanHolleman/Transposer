@@ -71,3 +71,6 @@ remap.py -i Chr1GenBank -s GMR30LTRConsensus.txt -l GMR30Consensus.txt -k access
 In this run we have also specified the optional parameters -a to 200 to increase the allowance in detecting solo elements and -o to set the output file. 
 
 `Include results of run with explaination next`
+
+## Coming Soon List
+* Remap stats file in addition to output with number allignments and of which type, quality, etc. 
