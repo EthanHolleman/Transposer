@@ -1,7 +1,8 @@
 import os
+import time
 from element import Element
 
-def toSortedBam(samFile):
+def toSortedBam(samFile, verbose):
     #takes a sam file and converts to sorted bam using samtools
     try:
         outputFile = samFile
@@ -14,7 +15,9 @@ def toSortedBam(samFile):
         commandBam = "samtools view -S -b {} > {}".format(samFile,bam) #commands to be executed
         commandSort = "samtools sort {} -o {}".format(bam,sortedBam)
 
+        if verbose: print("Running command: " + commandBam)
         os.system(commandBam)
+        if verbose: print("Running command: " + commandSort)
         os.system(commandSort)
 
         try: #removes redundant files but leaves the sorted bam for user
@@ -35,6 +38,7 @@ def toTxt(samFile):
 
     try:
         command = "samtools view {} > {}".format(samFile,outputFile)
+        if verbose: print("Running Command: " + command)
         os.system(command)
         return outputFile #returns txt file name corresponding to txt file created
 
@@ -42,17 +46,20 @@ def toTxt(samFile):
         print("FileNotFoundError at toTxt in search.py")
 
 
-def createAllignmentList(bamToTxtFile,dict):
+def createAllignmentList(bamToTxtFile,dict,verbose):
     #takes txt file from toTxt method and converts to list of Element objects
     try:
         elementList = []
         with open(bamToTxtFile, "r") as txt:
+            i = 0
             for line in txt:
                 line = line.split("\t") #splits each line into a list
                 name = line[2]
                 start = line[3]
                 seq = line[9]
                 elementList.append(Element(name, start,0,0,"NONE",seq))
+                i += 1
+
 
         for element in elementList:
             element.endLocation = element.startLocation + len(element.seq) #sets end endLocation
@@ -90,76 +97,24 @@ def translateName(assenstionNums):
         print("FileNotFoundError" + " at translateName")
 
 
-def mergeLists(soloList, conList): #not getting the sololist for some reason
-    print(len(soloList))
-    print("This is the same of the solo list")
-    ## WARNING: Still requires testing
-    #takes the LTR list and complete element list and merges in order
-        #order based on chr number first then start location with lowest first
-    mergedList = []
-    done = "DONE"
-    iterCon = iter(conList)
-    iterSolo = iter(soloList)
-    soloDelta = next(iterSolo, done)
-    conDelta = next(iterCon, done)
+def mergeLists(soloList, conList, familyName):
 
-    while soloDelta != done and conDelta != done:
-        print(str(conDelta.startLocation) + " " + conDelta.status)
-        if soloDelta.name < conDelta.name: #testing for chr number
-            mergedList.append(soloDelta)
-            soloDelta = next(iterSolo,done)
-        elif soloDelta.name > conDelta.name:
-            mergedList.append(conDelta)
-            conDelta = next(iterCon,done)
-        else:
-            if soloDelta.startLocation < conDelta.startLocation:
-                mergedList.append(soloDelta)
-                soloDelta = next(iterSolo,done)
-            else:
-                mergedList.append(conDelta)
-                conDelta = next(iterCon,done)
-
-    #at this point solo list iter will be complete
-
-    if soloDelta == done:
-        print("solo was done first")
-        while conDelta != done:
-            mergedList.append(conDelta)
-            conDelta = next(iterCon,done)
-
-    elif conDelta == done:
-        print("con was done first")
-        while soloDelta != done:
-            mergedList.append(soloDelta)
-            soloDelta = next(iterSolo,done)
-
-
-     #add all remaining elements to the merged list
-
-    return mergedList
-
-
-def nameElements(mergedList, familyName):
-    #orders the elements along the chromosomes and based on order renames
-    chrDict = {}
+    merge = soloList + conList
+    mergeDict = {}
     finalList = []
 
-    for element in mergedList:
-        if element.name not in chrDict: #names at this point are only ints
-            chrDict[element.name] = [element]
-        else:
-            chrDict[element.name].append(element) #if already present adds to a list corresponding to chr number
+    for element in merge:
+        if element.name not in mergeDict:
+            mergeDict[element.name] = [element]
+        else: mergeDict[element.name].append(element)
 
-    for key in chrDict:
-        list = chrDict[key] #gets list of elements sorted into a given chr number key
-        i = 1 #acts as element counter reset at each new key
-        for element in list: #loops through elements in chr list
-            element.name = str(familyName) + " " + element.name + "-" + str(i)
-            finalList.append(element)
-            i += 1
+    for key in sorted(mergeDict.keys()):
+        mergeDict[key] = sorted(mergeDict[key], key = lambda e: e.startLocation)
+        for i,element in enumerate(mergeDict[key],1):
+            element.name = familyName + " " + str(key) + "-" + str(i)
+        finalList += mergeDict[key]
+
     return finalList
-
-
 
 
 def findSolos(LTRList,completeCon,allowance):
