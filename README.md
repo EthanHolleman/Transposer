@@ -70,7 +70,20 @@ remap.py -i Chr1GenBank -s GMR30LTRConsensus.txt -l GMR30Consensus.txt -k access
 
 In this run we have also specified the optional parameters -a to 200 to increase the allowance in detecting solo elements and -o to set the output file. 
 
-`Include results of run with explaination next`
+If we then open up the testRun.fasta file we created it will have the format of the example below.
+
+```
+>GMR30 1-1,3469733,3482833,13100,INTACT,
+TGTTTACGCTGGAATTTGGTAAACAACCGCTAGTCTAAGTTAATTGCT...
+>GMR30 1-2,37210498,37223598,13100,INTACT,
+TGTTTACGCTGGAATTTGGTAAACAACCGCTAGTCTAAGTTAATTGCT...
+>GMR30 1-3,38119449,38132549,13100,INTACT,
+TGTTTACGCTGGAATTTGGTAAACAACCGCTAGTCTAAGTTAATTGCT...
+>GMR30 1-4,50123892,50124736,844,SOLO,
+TGTTAGCCCATATTTTTGATGAGATAAAAATATGCTCTAAATACGAAT...
+```
+The sequences of the elements has been truncated to make viewing easier (sequences are the same since the start of all elements will be the LTR). 
+THe heading for each element from, right ot left, gives element name (family, chr-occurance), start location, end location, length and status. Intact elements may be truncated, this can be determined by element length.
 
 ## Coming Soon List
 * Remap stats file in addition to output with number allignments and of which type, quality, etc. 
