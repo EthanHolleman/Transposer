@@ -85,8 +85,8 @@ TGTTAGCCCATATTTTTGATGAGATAAAAATATGCTCTAAATACGAAT...
 The sequences of the elements has been truncated to make viewing easier (sequences are the same since the start of all elements will be the LTR). 
 THe heading for each element from, right ot left, gives element name (family, chr-occurance), start location, end location, length and status. Intact elements may be truncated, this can be determined by element length.
 
-The figure below shows the results of the remap search and compares the location of remaped elements to the locations in the outdated reference version. Dots represent the locations of elements with blue dots being Solo elements.
-![RplotRemap](https://user-images.githubusercontent.com/45807040/55933012-661e0480-5bf1-11e9-9050-49a11e9a78d6.png)
+Results of complete GMR30 remap compared to the original 2010 assembly element locations 
+![comparePlot](https://user-images.githubusercontent.com/45807040/57342019-4d2a4580-7102-11e9-9e23-7ee95f2fa867.png)
 
 ## Coming Soon List
 * Remap stats file in addition to output with number allignments and of which type, quality, etc. 
