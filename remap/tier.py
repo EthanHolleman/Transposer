@@ -5,24 +5,24 @@
 import os
 from interp import toSortedBam
 
-def search (con, index, outputFile):
+def search (con, index, outputFile,verbose):
     #general search method for a local allignments
 
     try:
         #print("Samtools view -S -b {} ".format(outputFile))
         commandSearch = "bowtie2 -x {} -r {} -a --non-deterministic -S {}".format(index,con,outputFile)
-        #samCommand = "Samtools view -S -b {} ".format(outputFile)
+        samCommand = "Samtools view -S -b {} ".format(outputFile)
         #print("Samtools view -S -b {} ".format(outputFile))
         os.system(commandSearch)
-        #os.system(samCommand)
-        outputFile = toSortedBam(outputFile)
+
+        outputFile = toSortedBam(outputFile,verbose)
 
         return outputFile
         #will run the command and return a samfile
     except FileNotFoundError:
         print("FileNotFoundError at search in search.py")
 
-def makeIndex(name,):
+def makeIndex(name):
     pass
 
 

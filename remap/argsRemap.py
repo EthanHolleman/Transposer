@@ -9,10 +9,15 @@ def argsRemap():
     parser.add_argument("-LTRcon","-l",help = "LTR consensus sequence")
     parser.add_argument("-seqCon", "-s",help = "Complete element consensus")
     parser.add_argument("-allowance", "-a", type = int,
-    help = "Number base pair variance in LTR map", nargs='?',const=1000)
+    help = "Number base pair variance in LTR map", nargs='?',const=150)
     parser.add_argument("-name", "-n", help = "Name of element family")
     parser.add_argument("-newIndex", "-b", help= "Tells program to create new bowtie index")
     parser.add_argument("-chrKeys", "-k", help = "Acts as a key to translate NCBI assention file chromosome names to numbers")
+    parser.add_argument("-outputFile", "-o", help = "Specify name of output file to write results to, will be in fasta style")
+    parser.add_argument("-verbose", "-v", help = "Transposer is quiet by defualt, typing True will set program to verbose")
+    parser.add_argument("-prevBlastDB", "-pBD", help = "Nuc BLAST database created from the same reference as the elements to be remapped")
+    parser.add_argument("-curBlastDB", "-cBD", help = "Nuc BLAST database created from the most recent reference")
+
     args = parser.parse_args()
 
     if not args.index:
@@ -27,5 +32,13 @@ def argsRemap():
     if not args.chrKeys:
         print("Please provide a file of keys for chromosomes")
         sys.exit()
+    if not args.outputFile:
+        args.outputFile = True
+    if not args.curBlastDB:
+        print("Please provide a blastdb nucl type of the most current assembly")
+    if not args.prevBlastDB:
+        print("Please provide a blastdb nucl type of the assembly of the previous elements")
+
+
 
     return args

@@ -1,45 +1,60 @@
-import sys, os, subprocess
+import sys, os, subprocess, re
 from element import Element
 
-#needs to take list of elements and search the blast db for them
-#need to create the blastdb
-#ideas Flanker object that contains the blast DB and infor for the strands
+def readPreviousElements(allignFile):
+    #takes list of previously ided elements and reads into an element list
+    #will read in the format given by soybase
+    #will be given in a fasta file
+    prevList = []
+    words = []
+    elementInfo = ()
+    with open(allignFile) as elements:
 
-class Flank():
+        for i,line in enumerate(elements):
+            if i % 2 == 0:
+                line = line.strip()
+                line = line.split(" ")
+                words = line
 
-    def __intit__(self, element, flanks):
-        self.element = element #element object
-        self.flanks = flanks #tuple
+                elementInfo = (words[0],
+                words[14].replace("description=", ""),
+                 words[16].replace("start=", ""),
+                 words[17].replace("end=", ""))
 
-    def __eq__(self):
-        pass
-        #elements are equal if the flanking sequences are simiilar enough and of same status
 
-def createBLASTDB():
+            else:
+                (name, status, start, end) = elementInfo
+                #prevList.append(new Element(name, start, end, 100, status, line))
+                prevList.append(Element(name, start,end,(int(end)- int(start)),status,line))
+                
+    return prevList
+
+
+def getElementSeq(blastdb, element):
+    #takes list of elements and uses blastDB to get the sequences should be passed into the createAllignmentList
+    #blast db should be the latest version of the reference
+
+    #translationDict = {y:x for x,y in dict.items()}
+    seqCommand = "blastdbcmd -db {} -dbtype nucl -range {}-{} -entry {}".format(blastdb, element.startLocation,
+    element.endLocation, element.name)
+    print(seqCommand)
+    seq = "".join(((str(subprocess.check_output(seqCommand, shell=True))).split("\\n"))[1:])
+    re.sub('[^0-9]','', seq)
+
+    return seq
+
+
+def matchElements(prevElements, curElements):
     pass
-    #assuming blast DB has already been created for now
-    #need database of the old and the new reference sequences
 
-def makeFlankList(elementList, blastdb, flankLength, dict):
-    #need to convert chr to assenstion nums
-    translationDict = my_dict2 = {y:x for x,y in dict.items()} #swaps keys and values so chr are now values
-    flankList = []
+def testFlanks(flankA, flankB):
 
-    for element in elementList:
-        makeRightFlank = "blastdbcmd -db {} -dbtype nucl -range {}-{} -entry {}".format(blastdb,
-        element.endLocation,(element.endLocation + flankLength),translationDict[element.name])
-
-        makeLeftFlank = "blastdbcmd -db {} -dbtype nucl -range {}-{} -entry {}".format(blastdb,
-        (element.startLocation-flankLength),element.startLocation,translationDict[element.name])
-
-        outputRight = "".join(((str(subprocess.check_output(makeRightFlank, shell=True))).split("\\n")).pop(0))
-        outputLeft = "".join(((str(subprocess.check_output(makeLeftFlank, shell=True))).split("\\n")).pop(0))
-        #runs subprocess, converts to str, splits on \\n, removes first value, joins back to string
-
-        flankList.append(Flank(element,(outputLeft, outputright)))
-
-    return flankList
-
-
-def testFlanks(listRemapedElements, listPreviousElements, assenstionNums):
-    pass
+    count = 0
+    for a, b in zip(flankA, flankB):
+        print(a + " " + b)
+        if str(a) == str(b):
+             count = count + 1 #counts number of equals between flanks
+             print(count)
+    #could also return the percent identity with true or false as a tuple
+    if count / len(flankA) >= 0.95: return True
+    else: return False

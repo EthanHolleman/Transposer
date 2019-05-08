@@ -1,6 +1,8 @@
-import os
-import time
+import os, time, subprocess
 from element import Element
+from flanker import *
+
+#python remap.py -i Chr1GenBank -l GMR30LTRConsensus.txt -s Gmr30Consensus.txt -k assensionNums.txt -name"GMR30"
 
 def toSortedBam(samFile, verbose):
     #takes a sam file and converts to sorted bam using samtools
@@ -32,7 +34,7 @@ def toSortedBam(samFile, verbose):
     except FileNotFoundError:
         print("FileNotFoundError at toSortedBam in search.py")
 
-def toTxt(samFile):
+def toTxt(samFile, verbose):
     #takes a sam or bam file and converts to txt using samtools view
     outputFile = samFile + ".txt"
 
@@ -46,32 +48,36 @@ def toTxt(samFile):
         print("FileNotFoundError at toTxt in search.py")
 
 
-def createAllignmentList(bamToTxtFile,dict,verbose):
+def createAllignmentList(bamToTxtFile,dict,verbose,curBlastDB):
     #takes txt file from toTxt method and converts to list of Element objects
     try:
         elementList = []
         with open(bamToTxtFile, "r") as txt:
-            i = 0
+
             for line in txt:
                 line = line.split("\t") #splits each line into a list
                 name = line[2]
                 start = line[3]
-                seq = line[9]
-                elementList.append(Element(name, start,0,0,"NONE",seq))
-                i += 1
+                length = line[5] #gives cigar to the length as a temp holder
+
+                elementList.append(Element(name, start,0,length,"NONE","ATGC"))
 
 
         for element in elementList:
-            element.endLocation = element.startLocation + len(element.seq) #sets end endLocation
-            element.length = element.endLocation - element.startLocation #sets length
-            element.status = "INTACT"
+            element.length = cigarParser(element.length)
+            element.endLocation = element.startLocation + element.length #changed calculation of length using CIGAR
+            element.status = "INTACT" #defualy status is INTACT
+            element.seq = getElementSeq(curBlastDB, element)
+
+            #to get the element sequence need a blast DB of the new assembly and assencion number
 
             try:
                 element.name = dict[element.name] #uses provided dictionary to set name to chr number
 
             except KeyError:
-                print("keyError at createAllignmentList")
-                print("key used was " + element.name)
+                if verbose:
+                    print("keyError at createAllignmentList")
+                    print("key used was " + element.name)
 
         os.system("rm {}".format(bamToTxtFile)) # removes txt version as no longer used
 
@@ -89,7 +95,8 @@ def translateName(assenstionNums):
             for line in names:
                 line = line.replace("\n","")
                 line = line.split("\t")
-                chrs.update({line[1] : line[0]})
+                number, CM = line
+                chrs.update({CM : number})
 
         return chrs
 
@@ -111,7 +118,7 @@ def mergeLists(soloList, conList, familyName):
     for key in sorted(mergeDict.keys()):
         mergeDict[key] = sorted(mergeDict[key], key = lambda e: e.startLocation)
         for i,element in enumerate(mergeDict[key],1):
-            element.name = familyName + " " + str(key) + "-" + str(i)
+            element.name = str(familyName) + " " + str(key) + "-" + str(i)
         finalList += mergeDict[key]
 
     return finalList
@@ -157,3 +164,18 @@ def findSolos(LTRList,completeCon,allowance):
         i+=1
 
     return soloList
+
+def cigarParser(cigar):
+    #reads the cigar info from an allignment and translates into the length on the alligned refernce 
+    length = 0
+    temp = ""
+    for char in cigar:
+        temp = temp + "" + char
+        if char == "M" or char == "D":
+            temp = temp[:-1]
+            length += int(temp)
+            temp = ""
+        elif char == "I" or char == "H":
+            temp = ""
+
+    return length
