@@ -15,8 +15,10 @@ def argsRemap():
     parser.add_argument("-chrKeys", "-k", help = "Acts as a key to translate NCBI assention file chromosome names to numbers")
     parser.add_argument("-outputFile", "-o", help = "Specify name of output file to write results to, will be in fasta style")
     parser.add_argument("-verbose", "-v", help = "Transposer is quiet by defualt, typing True will set program to verbose")
-    parser.add_argument("-prevBlastDB", "-pBD", help = "Nuc BLAST database created from the same reference as the elements to be remapped")
-    parser.add_argument("-curBlastDB", "-cBD", help = "Nuc BLAST database created from the most recent reference")
+    parser.add_argument("-prevBlastDB", "-p", help = "Nuc BLAST database created from the same reference as the elements to be remapped")
+    parser.add_argument("-curBlastDB", "-c", help = "Nuc BLAST database created from the most recent reference")
+    parser.add_argument("-prevElements", "-e", help = "Nuc BLAST database created from the most recent reference")
+    parser.add_argument("-chrKeysPrev", "-m", help = "Nuc BLAST database created from the most recent reference")
 
     args = parser.parse_args()
 
@@ -36,8 +38,9 @@ def argsRemap():
         args.outputFile = True
     if not args.curBlastDB:
         print("Please provide a blastdb nucl type of the most current assembly")
-    if not args.prevBlastDB:
-        print("Please provide a blastdb nucl type of the assembly of the previous elements")
+        sys.exit()
+    if not args.prevBlastDB or not args.prevElements:
+        print("No previous assembly and or previous element list provided so new elements will not be backmapped")
 
 
 
