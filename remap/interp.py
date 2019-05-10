@@ -66,7 +66,7 @@ def createAllignmentList(bamToTxtFile,dict,verbose,curBlastDB):
 
         for element in elementList:
             element.length = cigarParser(element.length)
-            element.endLocation = element.startLocation + element.length #changed calculation of length using CIGAR
+            element.endLocation = element.startLocation + element.length -1#changed calculation of length using CIGAR
             element.status = "INTACT" #defualy status is INTACT
             element.seq = getElementSeq(curBlastDB, element)
 

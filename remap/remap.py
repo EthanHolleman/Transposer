@@ -25,8 +25,8 @@ def main():
 
     if args.prevBlastDB and args.prevElements:
         #read the previous elements into a list whihc the fucntion
-        backMapElements(readPreviousElements(args.prevElements, args.chrKeysPrev),finalList,args.prevBlastDB, args.curBlastDB,args.chrKeysPrev,args.chrKeys)
-
+        backDict = backMapElements(readPreviousElements(args.prevElements, args.chrKeysPrev),finalList,args.prevBlastDB, args.curBlastDB,args.chrKeysPrev,args.chrKeys)
+        matchsToTxt(backDict)
 '''
     if args.outputFile == True:
         for element in finalList:

@@ -77,16 +77,14 @@ def getAccNumbersFromTxt(accFile):
 
 def backMapElements(prevElements, curElements, prevBlastDB, curBlastDB, prevAcc, curAcc):
     #lots of shit to d owith element comparisons
-    pass
-    #get elements of each type and sort by the chromsome they are at
-
+    #key error happening if there are new elements (solos usually in chromsomes that did not have any before )
     prevIntacts = {}
     prevSolos = {}
     accTranslate = {}
+    matchDict = {}
 
-    for cur, prev in zip(getAccNumbersFromTxt(curAcc), getAccNumbersFromTxt(prevAcc)):
+    for cur, prev in zip(getAccNumbersFromTxt(curAcc), getAccNumbersFromTxt(prevAcc)): #building dictionary
         accTranslate[cur] = prev
-        print(cur + " " + prev )
 
 
     for element in prevElements:
@@ -106,37 +104,54 @@ def backMapElements(prevElements, curElements, prevBlastDB, curBlastDB, prevAcc,
                 prevSolos[element.accession] = [element]
 
     #start of the actual comparison loop
+
+
     for curElement in curElements:
-        #not getting the ID of the last tested element for some reason
+
         transAcc = accTranslate[curElement.accession]
         curL, curR = getFlanks(curElement, curBlastDB)
-        print("Testing " + curElement.name + " " + curElement.status + " " + curElement.accession +  " This is the test")
+        print("Now testing " + curElement.name + "\n")
+
         if curElement.status == "INTACT":
 
-            for prevIntact in prevIntacts[transAcc]: #looping through only elements of same type and chr
-                print(prevIntact.name)
-                prevL, prevR = getFlanks(prevIntact,prevBlastDB)
+            try:
+                for prevIntact in prevIntacts[transAcc]: #looping through only elements of same type and chr
 
-                if(testFlanks(curL, prevL)):
+                    prevL, prevR = getFlanks(prevIntact,prevBlastDB)
 
-                    print("______found match_________ to ")
-                    print(curL)
-                    print(prevL)
-                    break
+                    if(testFlanks(curL, prevL) and testFlanks(curR,prevR)):
 
-
+                        print("______found match_________ to " + prevIntact.name + " " + prevIntact.status)
+                        print(prevR + " " + curR)
+                        print(prevL + " " + curL + "\n")
+                        matchDict[curElement] = prevIntact
+                        break
+            except KeyError:
+                continue
+                #prevents key error when a new solo on chromosome which did not have one in previous version
 
         elif curElement.status == "SOLO":
+            #putting a prev accession into the data structure
 
-            for prevSolo in prevSolos[transAcc]: #looping through only elements of same type and chr
+            try:
+                for prevSolo in prevSolos[transAcc]: #looping through only elements of same type and chr
 
-                prevL, prevR = getFlanks(prevSolo,prevBlastDB)
+                    prevL, prevR = getFlanks(prevSolo,prevBlastDB)
 
-                if(testFlanks(curL, prevL)):
-                    print("______found match_________")
+                    if(testFlanks(curL, prevL) and testFlanks(curR,prevR)):
+                        print("______found match_________ to " + prevSolo.name + " " + prevSolo.status)
+                        print(prevR + " " + curR)
+                        print(prevL + " " + curL + "\n")
+                        matchDict[curElement] = prevSolo
+                        break
+            except KeyError:
+                continue
+
+    return matchDict
 
 
 def getFlanks(element, blastdb):
+    #uses element and the corresponding blastdb to get right and let flanks
     n = 25
     left = element.startLocation - n
     right = element.endLocation + n
@@ -158,7 +173,7 @@ def getFlanks(element, blastdb):
 
 
 def testFlanks(flankA, flankB):
-
+    #test flanks from two different elements and returns true if > 95% identity
     count = 0
     for a, b in zip(flankA, flankB):
 
@@ -168,3 +183,19 @@ def testFlanks(flankA, flankB):
     #could also return the percent identity with true or false as a tuple
     if count / len(flankA) >= 0.95: return True
     else: return False
+
+def matchsToTxt(matchDict):
+    #takes the dictionary of matches from backMapElements and converts to a txt file
+    #sequences are ommitted for readabilit
+    counter = 0;
+    with open("matchReport.txt", "w") as match:
+        for key in matchDict:
+            counter +=1
+            prev = matchDict[key]
+            match.write(key.name + "\t" + prev.name + "\n")
+            match.write(key.accession+ "\t" + prev.accession + "\n")
+            match.write(key.status+ "\t" + prev.status + "\n")
+            match.write(str(key.startLocation) + "\t" + str(prev.startLocation) + "\n")
+            match.write(str(key.endLocation) + "\t" + str(prev.endLocation) + "\n")
+            match.write(str(key.length)+ "\t" + str(prev.length) + "\n\n")
+        match.write(str(counter) + " total matches")
