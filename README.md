@@ -70,7 +70,14 @@ TGTTAGCCCATATTTTTGATGAGATAAAAATATGCTCTAAATACGAAT...
 ```
 
 The run will also return a matchReport.txt which contains the results of the backmap functionality. Elements found in the same rows of this file are likely to be the same element across the reference versions. 
-
+```
+ameGMR30 1-2	Gm1-2
+CM000834.3	CM000834.1
+INTACT		INTACT
+37210498	35844653
+37223600	35857770
+13103		13117
+```
 
 ## Example Results 
 
