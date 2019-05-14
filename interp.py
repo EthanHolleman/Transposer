@@ -57,15 +57,16 @@ def createAllignmentList(bamToTxtFile,dict,verbose,curBlastDB):
             for line in txt:
                 line = line.split("\t") #splits each line into a list
                 name = line[2]
+                acc = line[2]
                 start = line[3]
                 length = line[5] #gives cigar to the length as a temp holder
 
-                elementList.append(Element(name, start,0,length,"NONE","ATGC"))
+                elementList.append(Element(name,acc,start,0,length,"NONE","ATGC"))
 
 
         for element in elementList:
             element.length = cigarParser(element.length)
-            element.endLocation = element.startLocation + element.length #changed calculation of length using CIGAR
+            element.endLocation = element.startLocation + element.length -1#changed calculation of length using CIGAR
             element.status = "INTACT" #defualy status is INTACT
             element.seq = getElementSeq(curBlastDB, element)
 
@@ -166,7 +167,7 @@ def findSolos(LTRList,completeCon,allowance):
     return soloList
 
 def cigarParser(cigar):
-    #reads the cigar info from an allignment and translates into the length on the alligned refernce 
+    #reads the cigar info from an allignment and translates into the length on the alligned refernce
     length = 0
     temp = ""
     for char in cigar:
