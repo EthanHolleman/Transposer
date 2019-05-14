@@ -1,5 +1,5 @@
 
-# DRAFT
+
 ## Overview
 
 This program is designed to allow researchers interested in LTR retrotransposons to quickly remap elements from outdated reference assembly versions to the latest version. 
@@ -54,22 +54,25 @@ Transposer works best if you add the downloaded file to your path variables. It 
 |-o | Name of output file that remaped elements will be written to in fasta format, if not given will be set to output.fasta | False
 |-v | Verbose mode, transposer runs in quiet mode by defualt, setting verbose to "True" will enter verbose mode |False |
  
+## Output 
+
+Running remap.py will return a fasta file containing the collection of remaped elements ordered based on their locations in their respective chromosomes, as is shown in the example output below. Top lines can be read as element name, start location, end location, length, status (Intact or solo). 
 
 ```
->GMR30 1-1,3469733,3482833,13100,INTACT,
+>GMR30 1-1,3469733,3482833,13100,INTACT
 TGTTTACGCTGGAATTTGGTAAACAACCGCTAGTCTAAGTTAATTGCT...
->GMR30 1-2,37210498,37223598,13100,INTACT,
+>GMR30 1-2,37210498,37223598,13100,INTACT
 TGTTTACGCTGGAATTTGGTAAACAACCGCTAGTCTAAGTTAATTGCT...
->GMR30 1-3,38119449,38132549,13100,INTACT,
+>GMR30 1-3,38119449,38132549,13100,INTACT
 TGTTTACGCTGGAATTTGGTAAACAACCGCTAGTCTAAGTTAATTGCT...
->GMR30 1-4,50123892,50124736,844,SOLO,
+>GMR30 1-4,50123892,50124736,844,SOLO
 TGTTAGCCCATATTTTTGATGAGATAAAAATATGCTCTAAATACGAAT...
 ```
-The sequences of the elements has been truncated to make viewing easier (sequences are the same since the start of all elements will be the LTR). 
-THe heading for each element from, right ot left, gives element name (family, chr-occurance), start location, end location, length and status. Intact elements may be truncated, this can be determined by element length.
+
+The run will also return a matchReport.txt which contains the results of the backmap functionality. Elements found in the same rows of this file are likely to be the same element across the reference versions. 
+
+
+## Example Results 
 
 Results of complete GMR30 remap compared to the original 2010 assembly element locations 
 ![comparePlot](https://user-images.githubusercontent.com/45807040/57342019-4d2a4580-7102-11e9-9e23-7ee95f2fa867.png)
-
-## Coming Soon List
-* Remap stats file in addition to output with number allignments and of which type, quality, etc. 
