@@ -2,8 +2,6 @@ import os, time, subprocess
 from element import Element
 from flanker import *
 
-#python remap.py -i Chr1GenBank -l GMR30LTRConsensus.txt -s Gmr30Consensus.txt -k assensionNums.txt -name"GMR30"
-
 def toSortedBam(samFile, verbose):
     #takes a sam file and converts to sorted bam using samtools
     try:
@@ -89,7 +87,7 @@ def createAllignmentList(bamToTxtFile,dict,verbose,curBlastDB):
 
 
 def translateName(assenstionNums):
-    #reads NCBI assenstion number file to create dictionary to translate number to chrs later on
+    #reads NCBI accenstion number file to create dictionary to translate number to chrs later on
     try:
         chrs = {}
         with open(assenstionNums) as names:
@@ -127,7 +125,7 @@ def mergeLists(soloList, conList, familyName):
 
 def findSolos(LTRList,completeCon,allowance):
     #takes list of LTR elements and determines if each should be considered a solo element based on allowance
-    ##TODO need to write method for getting completeCon length
+
     soloList = []
     i = 0
     completeConLength = 0
@@ -147,20 +145,20 @@ def findSolos(LTRList,completeCon,allowance):
             LTRList[i].status = "INTACT"
             LTRList[i+1].status = "INTACT"
             i+=1
-            if i==len(LTRList)-1: # breaks if next element is the last in the list
+            if i==len(LTRList)-1: 
                 break
 
         elif (abs(diff) > allowance):
             LTRList[i].status = "SOLO"
             soloList.append(LTRList[i])
-            if i == len(LTRList)-2: #breaks if second to last LTR is a solo, b/c next LTR must also be a solo
+            if i == len(LTRList)-2:
                 soloList.append(LTRList[i+1])
                 break
         else:
             LTRList[i].status = "INTACT"
             LTRList[i+1].status = "INTACT"
             i+=1
-            if i == len(LTRList)-1: # breaks if next element is the last in the list
+            if i == len(LTRList)-1:
                 break
         i+=1
 

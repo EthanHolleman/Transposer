@@ -24,10 +24,10 @@ def main():
     finalList = mergeLists(soloList, ElementListCon, args.name)
 
     if args.prevBlastDB and args.prevElements:
-        #read the previous elements into a list whihc the fucntion
+        #read the previous elements into a list
         backDict = backMapElements(readPreviousElements(args.prevElements, args.chrKeysPrev),finalList,args.prevBlastDB, args.curBlastDB,args.chrKeysPrev,args.chrKeys)
         matchsToTxt(backDict)
-'''
+
     if args.outputFile == True:
         for element in finalList:
             print(element.toStringFasta())
@@ -35,7 +35,7 @@ def main():
         with open(args.outputFile, "w") as out:
             for element in finalList:
                 out.write(element.toStringFasta)
-'''
+
 
 if __name__ == "__main__":
     main()
