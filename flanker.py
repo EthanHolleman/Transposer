@@ -2,82 +2,88 @@ import sys, os, subprocess, re
 from element import Element
 
 def readPreviousElements(allignFile, accNums):
-    #takes list of previously ided elements and reads into an element list
-    #will read in the format given by soybase
-    #will be given in a fasta file
+    #Takes fasta of outdated elements and reads into list of element objects
     prevList = []
     words = []
     elementInfo = ()
     transDict = {}
 
-    with open(accNums) as nums:
-        for line in nums:
-            if line != "\n":
-                l = line.strip()
-                l = line.split("\t")
+    try:
+        with open(accNums) as nums:
+            for line in nums:
+                if line != "\n":
+                    l = line.strip()
+                    l = line.split("\t")
 
-                transDict[l[0]] = l[1].strip()
+                    transDict[l[0]] = l[1].strip()
+    except FileNotFoundError:
+        print(allignFile + " not found")
 
-            #dict is chromosome number to assenstion num
+    try:
+        with open(allignFile) as elements:
 
-    with open(allignFile) as elements:
+            for i,line in enumerate(elements):
+                if i % 2 == 0:
+                    line = line.strip()
+                    line = line.split(" ")
+                    words = line
 
-        for i,line in enumerate(elements):
-            if i % 2 == 0:
-                line = line.strip()
-                line = line.split(" ")
-                words = line
+                    acc = words[15].replace("chromosome=Gm", "")
+                    if acc[0] == "0": acc = acc[1:]
 
-                acc = words[15].replace("chromosome=Gm", "")
-                if acc[0] == "0": acc = acc[1:]
+                    names = words[0].split("_")
+                    name = names[2]
+                    print(name)
 
+                    elementInfo = (name,transDict[acc],
+                    words[14].replace("description=", ""),
+                    words[16].replace("start=", ""),
+                    words[17].replace("end=", ""))
 
-                names = words[0].split("_")
-                name = names[2]
-                print(name)
+                else:
+                    (name,acc,status, start, end) = elementInfo
+                    print(elementInfo)
+                    #prevList.append(new Element(name, start, end, 100, status, line))
+                    prevList.append(Element(name, acc, start,end,(int(end)- int(start)),status,line))
 
+                return prevList
 
-                elementInfo = (name,transDict[acc],
-                words[14].replace("description=", ""),
-                words[16].replace("start=", ""),
-                words[17].replace("end=", ""))
+    except FileNotFoundError:
+        print(allignFile + " not found")
 
-
-            else:
-                (name,acc,status, start, end) = elementInfo
-                print(elementInfo)
-                #prevList.append(new Element(name, start, end, 100, status, line))
-                prevList.append(Element(name, acc, start,end,(int(end)- int(start)),status,line))
-
-    return prevList
-    #names come out as the accension numbers so they can be taken directly to get ElementSeq
 
 def getElementSeq(blastdb, element):
     #takes list of elements and uses blastDB to get the sequences should be passed into the createAllignmentList
-    #blast db should be the latest version of the reference
 
-    #translationDict = {y:x for x,y in dict.items()}
-    seqCommand = "blastdbcmd -db {} -dbtype nucl -range {}-{} -entry {}".format(blastdb, element.startLocation,
-    element.endLocation, element.accession) #name is the current entry
+    try:
+        seqCommand = "blastdbcmd -db {} -dbtype nucl -range {}-{} -entry {}".format(blastdb, element.startLocation,
+        element.endLocation, element.accession) #name is the current entry
 
-    seq = "".join(((str(subprocess.check_output(seqCommand, shell=True))).split("\\n"))[1:])
-    re.sub('[^0-9]','', seq)
+        seq = "".join(((str(subprocess.check_output(seqCommand, shell=True))).split("\\n"))[1:])
+        re.sub('[^0-9]','', seq)
 
-    return seq
+        return seq
+
+    except:
+        print(blastdb + " error")
+
 
 def getAccNumbersFromTxt(accFile):
+    #pulls the accession numbers from the GenBank accession files
     accNums = []
-    with open(accFile) as acc:
-        for line in acc:
-            line = line.split("\t")
-            if len(line) >1: accNums.append(line[1].strip())
+    try:
+        with open(accFile) as acc:
+            for line in acc:
+                line = line.split("\t")
+                if len(line) >1: accNums.append(line[1].strip())
+        return accNums
 
-    return accNums
+    except FileNotFoundError:
+        print(accFile + " not found")
 
 
 def backMapElements(prevElements, curElements, prevBlastDB, curBlastDB, prevAcc, curAcc):
-    #lots of shit to d owith element comparisons
-    #key error happening if there are new elements (solos usually in chromsomes that did not have any before )
+    #finds element matches between assemblies using blast databases and flanking sequences
     prevIntacts = {}
     prevSolos = {}
     accTranslate = {}
@@ -104,8 +110,6 @@ def backMapElements(prevElements, curElements, prevBlastDB, curBlastDB, prevAcc,
                 prevSolos[element.accession] = [element]
 
     #start of the actual comparison loop
-
-
     for curElement in curElements:
 
         transAcc = accTranslate[curElement.accession]
@@ -180,13 +184,13 @@ def testFlanks(flankA, flankB):
         if str(a) == str(b):
              count = count + 1 #counts number of equals between flanks
 
-    #could also return the percent identity with true or false as a tuple
+
     if count / len(flankA) >= 0.95: return True
     else: return False
 
 def matchsToTxt(matchDict):
     #takes the dictionary of matches from backMapElements and converts to a txt file
-    #sequences are ommitted for readabilit
+    #sequences are ommitted for readability
     counter = 0;
     with open("matchReport.txt", "w") as match:
         for key in matchDict:
