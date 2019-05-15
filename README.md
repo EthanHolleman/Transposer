@@ -16,12 +16,13 @@ Currently this program will only run on operating systems with a BASH terminal. 
 
 Transposer works best if you add the downloaded file to your path variables. It has not been tested on BASH programs for windows such as Putty. 
 
-## Preliminary Quick Start Guide
+##Quick Start Guide
 
 * What you need
 	* Outdated and current assembly sequence files
 	* List of outdated LTR retrotransposons in [this format](https://soybase.org/soytedb/te_request.php?class=I&subclass=I&order=LTR&superfam=Gypsy&fam=Gmr30)
 	* Consensus sequences of LTR and complete element created from members of the family you intend to remap
+	* 
   * GenBank Accession files for both assemblies
  Next follow these steps 
  
