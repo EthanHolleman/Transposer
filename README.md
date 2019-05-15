@@ -6,6 +6,8 @@ This program is designed to allow researchers interested in LTR retrotransposons
 The program is designed to be used with UNIX based operating systems, namely Mac and Linux flavors and was designed in Ubuntu.
 Transposer was tested on datasets taken from *Glycine max* (modern soybean). This species was chosen as it is the primary focus of current research at the Laten Lab and it contains a wide array of LTR type transposable element families within its genome presenting many opportunities for remaps.
 
+[Great Lakes Bioinformatics poster presentation](https://drive.google.com/file/d/1sTLtBwvgn21qiE_KMrZm0lWpak7nXJJA/view?usp=sharing)
+
 ## Required Software / OS
 Currently this program will only run on operating systems with a BASH terminal. The following programs just already be preinstalled.
 
