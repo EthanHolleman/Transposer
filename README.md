@@ -16,7 +16,7 @@ Currently this program will only run on operating systems with a BASH terminal. 
 
 Transposer works best if you add the downloaded file to your path variables. It has not been tested on BASH programs for windows such as Putty. 
 
-##Quick Start Guide
+## Quick Start Guide
 
 * What you need
 	* Outdated and current assembly sequence files
