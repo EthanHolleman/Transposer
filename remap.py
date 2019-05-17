@@ -34,7 +34,7 @@ def main():
     else:
         with open(args.outputFile, "w") as out:
             for element in finalList:
-                out.write(element.toStringFasta)
+                out.write(element.toStringFasta())
 
 
 if __name__ == "__main__":
