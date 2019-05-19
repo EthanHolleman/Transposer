@@ -1,4 +1,4 @@
-import sys, os, subprocess, re
+-import sys, os, subprocess, re
 from element import Element
 
 def readPreviousElements(allignFile, accNums):
@@ -185,7 +185,7 @@ def testFlanks(flankA, flankB):
              count = count + 1 #counts number of equals between flanks
 
 
-    if count / len(flankA) >= 0.95: return True
+    if count / len(flankA) >= 0.90: return True
     else: return False
 
 def matchsToTxt(matchDict):

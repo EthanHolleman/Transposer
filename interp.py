@@ -55,11 +55,10 @@ def createAllignmentList(bamToTxtFile,dict,verbose,curBlastDB):
             for line in txt:
                 line = line.split("\t") #splits each line into a list
                 name = line[2]
-                acc = line[2]
                 start = line[3]
                 length = line[5] #gives cigar to the length as a temp holder
 
-                elementList.append(Element(name,acc,start,0,length,"NONE","ATGC"))
+                elementList.append(Element(name,name,start,0,length,"NONE","ATGC"))
 
 
         for element in elementList:
@@ -145,7 +144,7 @@ def findSolos(LTRList,completeCon,allowance):
             LTRList[i].status = "INTACT"
             LTRList[i+1].status = "INTACT"
             i+=1
-            if i==len(LTRList)-1: 
+            if i==len(LTRList)-1:
                 break
 
         elif (abs(diff) > allowance):
